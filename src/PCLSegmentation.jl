@@ -47,7 +47,7 @@ for (name, supername) in [
     (:RegionGrowingRGB, AbstractSegmentation),
     ]
     cxxname = "pcl::$name"
-    valname = symbol(name, "Val")
+    valname = Symbol(name, "Val")
     @eval begin
         @defpcltype $name{T} <: $supername $cxxname
         @defptrconstructor $name{T}() $cxxname
@@ -62,7 +62,7 @@ for f in [
     :setMaxIterations,
     :setDistanceThreshold,
     ]
-    body = Expr(:macrocall, symbol("@icxx_str"), "\$(s.handle)->$f(\$arg);")
+    body = Expr(:macrocall, Symbol("@icxx_str"), "\$(s.handle)->$f(\$arg);")
     @eval $f(s::SACSegmentation, arg) = $body
 end
 
@@ -76,7 +76,7 @@ for f in [
     :setSmoothnessThreshold,
     :setCurvatureThreshold,
     ]
-    body = Expr(:macrocall, symbol("@icxx_str"), "\$(s.handle)->$f(\$arg);")
+    body = Expr(:macrocall, Symbol("@icxx_str"), "\$(s.handle)->$f(\$arg);")
     @eval $f(s::RegionGrowingRGB, arg) = $body
 end
 

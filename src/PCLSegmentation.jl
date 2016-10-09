@@ -1,3 +1,13 @@
+"""
+The **pcl_segmentation** library contains algorithms for segmenting a point
+cloud into distinct clusters.
+
+http://docs.pointclouds.org/trunk/group__segmentation.html
+
+## Exports
+
+$(EXPORTS)
+"""
 module PCLSegmentation
 
 export AbstractSegmentation, segment, SACSegmentation, RegionGrowingRGB,
@@ -8,6 +18,7 @@ export AbstractSegmentation, segment, SACSegmentation, RegionGrowingRGB,
     setSmoothnessThreshold, setCurvatureThreshold,
     setSearchMethod, extract, getColoredCloud
 
+using DocStringExtensions
 using LibPCL
 using PCLCommon
 using PCLSearch

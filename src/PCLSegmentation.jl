@@ -11,12 +11,13 @@ $(EXPORTS)
 module PCLSegmentation
 
 export AbstractSegmentation, segment, SACSegmentation, RegionGrowingRGB,
+    EuclideanClusterExtraction,
     setOptimizeCoefficients, setModelType, setMethodType, setMaxIterations,
     setDistanceThreshold,
     setSearchMethod, setDistanceThreshold, setPointColorThreshold,
     setRegionColorThreshold, setMinClusterSize, setMaxClusterSize,
     setSmoothnessThreshold, setCurvatureThreshold,
-    setSearchMethod, extract, getColoredCloud
+    setSearchMethod, extract, getColoredCloud, setClusterTolerance
 
 using DocStringExtensions
 using LibPCL
@@ -40,6 +41,7 @@ end
 cxx"""
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/region_growing_rgb.h>
+#include <pcl/segmentation/extract_clusters.h>
 """
 
 abstract AbstractSegmentation <: PCLBase
@@ -56,6 +58,7 @@ end
 for (name, supername) in [
     (:SACSegmentation, AbstractSegmentation),
     (:RegionGrowingRGB, AbstractSegmentation),
+    (:EuclideanClusterExtraction, AbstractSegmentation),
     ]
     cxxname = "pcl::$name"
     valname = Symbol(name, "Val")
@@ -99,5 +102,22 @@ extract(s::RegionGrowingRGB, clusters::CxxStd.StdVector) =
 
 getColoredCloud(s::RegionGrowingRGB) =
     PointCloud(icxx"$(s.handle)->getColoredCloud();")
+
+for f in [
+    :setSearchMethod,
+    :setClusterTolerance,
+    :setMinClusterSize,
+    :setMaxClusterSize,
+    ]
+    body = Expr(:macrocall, Symbol("@icxx_str"), "\$(s.handle)->$f(\$arg);")
+    @eval $f(s::EuclideanClusterExtraction, arg) = $body
+end
+
+setSearchMethod(s::EuclideanClusterExtraction,
+    tree::Union{PCLKDTree.KdTree,PCLSearch.KdTree}) =
+    setSearchMethod(s, tree.handle)
+
+extract(s::EuclideanClusterExtraction, clusters::CxxStd.StdVector) =
+    icxx"$(s.handle)->extract($clusters);"
 
 end # module

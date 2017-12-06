@@ -44,7 +44,7 @@ cxx"""
 #include <pcl/segmentation/extract_clusters.h>
 """
 
-abstract AbstractSegmentation <: PCLBase
+abstract type AbstractSegmentation <: PCLBase end
 
 import PCLCommon: setIndices
 
